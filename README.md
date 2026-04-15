@@ -1,4 +1,4 @@
-# BusTrip
+# Shuttle
 
 A terminal UI for browsing Northwestern University bus routes and real-time arrival information.
 
