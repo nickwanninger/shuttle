@@ -181,6 +181,10 @@ html, body {
 
 /* ── Nickname inline editor ────────────────────────────────────────── */
 
+.fav-name {
+  cursor: text;
+}
+
 .nick-input {
   background: transparent;
   border: none;

@@ -173,14 +173,16 @@ function renderStopRow(stop, now, isFav) {
     return sep + renderChip(a, now);
   }).join('');
 
-  // Show inline nickname editor if this stop is being renamed
-  const nameHtml = state.nicknamingStopId === stop.stopId
+  // Clicking the name of a favorited stop opens the nickname editor
+  const nameEl = state.nicknamingStopId === stop.stopId
     ? `<input class="nick-input" id="nick-input" type="text" value="${escAttr(state.favorites.get(stop.stopId) ?? '')}" placeholder="${escAttr(stop.name)}" maxlength="40" autofocus>`
-    : `<span class="stop-name">${escHtml(stop.name)}</span>`;
+    : isFavStop
+      ? `<span class="stop-name fav-name" data-action="nickname" data-stop-id="${escAttr(stop.stopId)}" title="Click to set nickname">${escHtml(stop.name)}</span>`
+      : `<span class="stop-name">${escHtml(stop.name)}</span>`;
 
   return `<div class="stop-row" data-stop-id="${escAttr(stop.stopId)}">` +
     `<button class="${starClass}" data-action="fav" data-stop-id="${escAttr(stop.stopId)}" aria-label="${isFavStop ? 'unfavorite' : 'favorite'}">${starChar}</button>` +
-    nameHtml +
+    nameEl +
     `<div class="arrivals">${chipsHtml}</div>` +
     `</div>`;
 }
@@ -286,29 +288,28 @@ function wireEvents() {
 // Re-attaches click handlers to dynamically rendered stop row buttons.
 function rewireStopButtons() {
   // Favorite toggle buttons
+  // Star button always toggles favorite on/off
   document.querySelectorAll('[data-action="fav"]').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const sid = btn.dataset.stopId;
-      if (state.favorites.has(sid)) {
-        // Second click on a favorite → open nickname editor
-        if (state.nicknamingStopId === sid) {
-          state.nicknamingStopId = null;
-          render();
-        } else {
-          state.nicknamingStopId = sid;
-          render();
-          // Focus the input after render
-          const inp = document.getElementById('nick-input');
-          inp?.focus();
-          inp?.select();
-        }
-      } else {
-        state.favorites = toggleFavorite(state.favorites, sid);
-        saveFavorites(state.favorites);
-        state.nicknamingStopId = null;
-        render();
-      }
+      state.favorites = toggleFavorite(state.favorites, sid);
+      saveFavorites(state.favorites);
+      if (!state.favorites.has(sid)) state.nicknamingStopId = null;
+      render();
+    });
+  });
+
+  // Stop name click on a favorite → open nickname editor
+  document.querySelectorAll('[data-action="nickname"]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const sid = el.dataset.stopId;
+      state.nicknamingStopId = state.nicknamingStopId === sid ? null : sid;
+      render();
+      const inp = document.getElementById('nick-input');
+      inp?.focus();
+      inp?.select();
     });
   });
 
