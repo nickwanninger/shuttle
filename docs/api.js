@@ -1,7 +1,7 @@
 // api.js — translates api.go
 // Fetches data from Northwestern's TripShot transit API.
 
-const BASE_URL = 'https://corsproxy.io/?https://northwestern.tripshot.com';
+const BASE_URL = 'https://northwestern.tripshot.com';
 const GROUP_ID = '2ca5dc76-dd3f-4ab4-bd10-056785a989ed';
 const HEADERS = {
   'Accept': '*/*',
@@ -18,13 +18,13 @@ async function apiGet(url) {
 
 // Returns [{routeId, name}, ...]
 export async function fetchRouteList() {
-  return apiGet(`${BASE_URL}/v1/p/route?routeGroupId=${GROUP_ID}`);
+  return apiGet(`https://api.allorigins.win/raw?url=${encodeURIComponent(${BASE_URL}/v1/p/route?routeGroupId=${GROUP_ID})`);
 }
 
 // Returns {rides: [...]} for the given routeId on today's date.
 export async function fetchRouteSummary(routeId) {
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-  const data = await apiGet(`${BASE_URL}/v2/p/routeSummary/${routeId}?day=${today}`);
+  const data = await apiGet(`https://api.allorigins.win/raw?url=${encodeURIComponent(${BASE_URL}/v2/p/routeSummary/${routeId}?day=${today})`);
   return data.rides ?? [];
 }
 
