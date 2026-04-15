@@ -47,20 +47,21 @@ export function setNickname(map, stopId, nickname) {
   return next;
 }
 
-// buildStops — translates buildStops() from view.go:141.
-// Returns [{stopId, name, arrivals: [{eta: Date, isActive: bool, lateSec: int}]}]
+// buildStops — Returns [{stopId, name, arrivals: [{eta: Date, isActive: bool, lateSec: int}]}]
+//
+// Stop ORDER comes from ride.vias, which lists all stops in route sequence regardless
+// of whether they've been visited. Stop ARRIVALS come from ride.stopStatus (Awaiting
+// entries only). This means stops always appear in correct route order even when the
+// active ride is mid-route and has already passed some stops.
 export function buildStops(rides, stopNames, favorites) {
+  // Pass 1: build arrivals map from all non-completed rides' stopStatus.
   const arrivalsMap = new Map(); // stopId → [{eta, isActive, lateSec}]
-  const stopOrder = [];
-  const seen = new Set();
 
   for (const ride of rides) {
-    // Skip completed rides
     if ('Completed' in (ride.state ?? {})) continue;
     const isActive = 'Active' in (ride.state ?? {});
 
     for (const ssMap of (ride.stopStatus ?? [])) {
-      // Each element is {Awaiting: {stopId, expectedArrivalTime}} or another state key
       const info = ssMap['Awaiting'];
       if (!info?.stopId || !info?.expectedArrivalTime) continue;
 
@@ -68,26 +69,46 @@ export function buildStops(rides, stopNames, favorites) {
       if (isNaN(eta.getTime())) continue;
 
       const sid = info.stopId;
-      if (!seen.has(sid)) {
-        seen.add(sid);
-        stopOrder.push(sid);
-        arrivalsMap.set(sid, []);
-      }
+      if (!arrivalsMap.has(sid)) arrivalsMap.set(sid, []);
       arrivalsMap.get(sid).push({ eta, isActive, lateSec: ride.lateBySec ?? 0 });
     }
   }
 
-  // Sort arrivals per stop by ETA, cap at 4; build result array.
+  // Pass 2: determine canonical stop order from vias of any ride.
+  // Vias list every stop on the route in sequence — active, visited, and future.
+  // Use the first ride that has vias; all rides on the same route share the same sequence.
+  let stopOrder = [];
+  for (const ride of rides) {
+    if (ride.vias?.length > 0) {
+      stopOrder = ride.vias
+        .map(viaMap => Object.keys(viaMap)[0])
+        .filter(Boolean);
+      break;
+    }
+  }
+
+  // Fallback: if no vias data, use arrival order (preserves old behaviour).
+  if (stopOrder.length === 0) {
+    stopOrder = [...arrivalsMap.keys()];
+  }
+
+  // Pass 3: build result in via order, skipping stops with no arrivals.
   const stops = [];
+  const emitted = new Set();
+
   for (const sid of stopOrder) {
+    if (emitted.has(sid)) continue;
+    emitted.add(sid);
+
     const arrivals = arrivalsMap.get(sid);
+    if (!arrivals?.length) continue;
+
     arrivals.sort((a, b) => a.eta - b.eta);
-    const capped = arrivals.slice(0, 4);
 
     let name = sid.slice(0, 8) + '…';
     if (stopNames.has(sid)) name = stopNames.get(sid);
 
-    stops.push({ stopId: sid, name, arrivals: capped });
+    stops.push({ stopId: sid, name, arrivals: arrivals.slice(0, 4) });
   }
 
   return stops;
