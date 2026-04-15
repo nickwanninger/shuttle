@@ -18,13 +18,17 @@ async function apiGet(url) {
 
 // Returns [{routeId, name}, ...]
 export async function fetchRouteList() {
-  return apiGet(`${BASE_URL}/v1/p/route?routeGroupId=${GROUP_ID}`);
+  const url = `${BASE_URL}/v1/p/route?routeGroupId=${GROUP_ID}`;
+  const proxy_url = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+  return apiGet(proxy_url);
 }
 
 // Returns {rides: [...]} for the given routeId on today's date.
 export async function fetchRouteSummary(routeId) {
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-  const data = await apiGet(`${BASE_URL}/v2/p/routeSummary/${routeId}?day=${today}`);
+  const url = `${BASE_URL}/v2/p/routeSummary/${routeId}?day=${today}`;
+  const proxy_url = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+  const data = await apiGet(proxy_url);
   return data.rides ?? [];
 }
 
