@@ -48,6 +48,11 @@ type FavoritesData struct {
 	Favorites []FavoriteEntry `json:"favorites"`
 }
 
+// PreferencesData stores user preferences like time display mode.
+type PreferencesData struct {
+	RelativeTime bool `json:"relativeTime"`
+}
+
 // ── View/domain types (computed during rendering) ─────────────────────────────
 
 type StopWithArrivals struct {
