@@ -17,7 +17,7 @@ const state = {
   routeData: new Map(),    // routeId → rides[]
   stopNames: new Map(),    // stopId → name
   favorites: loadFavorites(),
-  relativeTime: localStorage.getItem('shuttle-relative-time') !== '0', // default true
+  relativeTime: localStorage.getItem('shuttle-relative-time') === '1', // default false
   searchQuery: '',
   loading: true,
   error: null,
