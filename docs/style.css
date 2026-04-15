@@ -264,3 +264,78 @@ html, body {
   display: inline-block;
   animation: spin 0.8s linear infinite;
 }
+
+/* ── Mobile ────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  html, body {
+    font-size: 15px;
+  }
+
+  /* Only show the first arrival chip */
+  .chip-extra {
+    display: none;
+  }
+
+  /* Taller rows for easier tapping */
+  .stop-row {
+    min-height: 2.75rem;
+    padding: 0.3rem 0.25rem;
+  }
+
+  /* Larger tap target for the star button */
+  .fav-btn {
+    width: 2.2rem;
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* Bigger touch target for status bar buttons */
+  .bar-btn {
+    min-height: 2.75rem;
+    display: flex;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    font-size: 0.9em;
+  }
+
+  /* Hide keyboard shortcut key hints — not useful on mobile */
+  .bar-btn .key {
+    display: none;
+  }
+
+  /* Account for iOS home indicator / Android nav bar */
+  #status-bar {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    height: calc(var(--bar-height) + env(safe-area-inset-bottom, 0));
+  }
+
+  #app {
+    padding-bottom: calc(var(--bar-height) + env(safe-area-inset-bottom, 0) + 0.5rem);
+  }
+
+  /* Hide the "/" keyboard hint label in the search bar */
+  #search-bar label {
+    display: none;
+  }
+
+  #search-input {
+    font-size: 1em;
+  }
+
+  /* Slightly more breathing room between sections */
+  .route-section {
+    margin-top: 1.5rem;
+  }
+
+  .route-header {
+    font-size: 1em;
+    padding: 0.25rem 0.25rem 0.25rem;
+  }
+}

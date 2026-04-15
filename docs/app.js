@@ -169,8 +169,9 @@ function renderStopRow(stop, now, isFav) {
   const starChar = isFavStop ? '★' : '☆';
 
   const chipsHtml = stop.arrivals.map((a, i) => {
-    const sep = i > 0 ? '<span class="chip-sep">·</span>' : '';
-    return sep + renderChip(a, now);
+    const extra = i > 0 ? ' chip-extra' : '';
+    const sep = i > 0 ? `<span class="chip-sep chip-extra">·</span>` : '';
+    return sep + renderChip(a, now, extra);
   }).join('');
 
   // Clicking the name of a favorited stop opens the nickname editor
@@ -188,7 +189,7 @@ function renderStopRow(stop, now, isFav) {
 }
 
 // Translates renderArrivalChip() from view.go:238
-function renderChip(arrival, now) {
+function renderChip(arrival, now, extraClass = '') {
   const mins = (arrival.eta - now) / 60000;
 
   let urgency;
@@ -221,7 +222,7 @@ function renderChip(arrival, now) {
     lateHtml = `<span class="chip-late">+${lateMin}m</span>`;
   }
 
-  return `<span class="chip ${urgency}">` +
+  return `<span class="chip ${urgency}${extraClass}">` +
     `<span class="chip-dot">${dotChar}</span>` +
     `<span class="chip-time">${escHtml(timeStr)}</span>` +
     lateHtml +
