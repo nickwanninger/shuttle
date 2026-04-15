@@ -1,7 +1,7 @@
 // api.js — translates api.go
 // Fetches data from Northwestern's TripShot transit API.
 
-const BASE_URL = 'https://northwestern.tripshot.com';
+const BASE_URL = 'https://corsproxy.io/?northwestern.tripshot.com';
 const GROUP_ID = '2ca5dc76-dd3f-4ab4-bd10-056785a989ed';
 const HEADERS = {
   'Accept': '*/*',
