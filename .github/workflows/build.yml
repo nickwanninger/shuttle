@@ -27,9 +27,9 @@ jobs:
       - name: Build ${{ matrix.name }}
         run: |
           GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} CGO_ENABLED=0 \
-            go build -o bustrip-${{ matrix.name }} .
+            go build -o shuttle-${{ matrix.name }} .
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bustrip-${{ matrix.name }}
-          path: bustrip-${{ matrix.name }}
+          name: shuttle-${{ matrix.name }}
+          path: shuttle-${{ matrix.name }}
