@@ -1,4 +1,4 @@
-module shuttle
+module github.com/nickwanninger/shuttle
 
 go 1.24.2
 
