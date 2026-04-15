@@ -19,7 +19,7 @@ async function apiGet(url) {
 // Returns [{routeId, name}, ...]
 export async function fetchRouteList() {
   const url = `${BASE_URL}/v1/p/route?routeGroupId=${GROUP_ID}`;
-  const proxy_url = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+  const proxy_url = `https://shuttle-proxy.tommymcmichen.workers.dev/?url=${encodeURIComponent(url)}`;
   return apiGet(proxy_url);
 }
 
@@ -27,7 +27,7 @@ export async function fetchRouteList() {
 export async function fetchRouteSummary(routeId) {
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   const url = `${BASE_URL}/v2/p/routeSummary/${routeId}?day=${today}`;
-  const proxy_url = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+  const proxy_url = `https://shuttle-proxy.tommymcmichen.workers.dev/?url=${encodeURIComponent(url)}`;
   const data = await apiGet(proxy_url);
   return data.rides ?? [];
 }
