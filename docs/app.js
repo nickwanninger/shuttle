@@ -176,7 +176,8 @@ function renderStopRow(stop, now, isFav) {
   const chipsHtml = stop.arrivals.map((a, i) => {
     const extra = i > 0 ? ' chip-extra' : '';
     const sep = i > 0 ? `<span class="chip-sep chip-extra">·</span>` : '';
-    return sep + renderChip(a, now, extra, i === 0);
+    const primary = i === 0 && window.innerWidth > 640;
+    return sep + renderChip(a, now, extra, primary);
   }).join('');
 
   // Favorited names open the nickname editor; all other names toggle the expanded schedule
