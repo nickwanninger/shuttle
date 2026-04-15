@@ -162,6 +162,11 @@ html, body {
 }
 
 .chip-time {
+  white-space: nowrap;
+}
+
+/* Keep extra chips aligned to a fixed width */
+.chip.chip-extra .chip-time {
   min-width: 3.2em;
 }
 

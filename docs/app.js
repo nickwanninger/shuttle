@@ -173,7 +173,7 @@ function renderStopRow(stop, now, isFav) {
   const chipsHtml = stop.arrivals.map((a, i) => {
     const extra = i > 0 ? ' chip-extra' : '';
     const sep = i > 0 ? `<span class="chip-sep chip-extra">·</span>` : '';
-    return sep + renderChip(a, now, extra);
+    return sep + renderChip(a, now, extra, i === 0);
   }).join('');
 
   // Favorited names open the nickname editor; all other names toggle the expanded schedule
@@ -228,7 +228,9 @@ function renderExpandedSchedule(stopId, now) {
 }
 
 // Translates renderArrivalChip() from view.go:238
-function renderChip(arrival, now, extraClass = '') {
+// primary=true: always show "12:20 PM (in 20m)" regardless of relativeTime toggle.
+// primary=false: obey relativeTime toggle (used for extra chips).
+function renderChip(arrival, now, extraClass = '', primary = false) {
   const mins = (arrival.eta - now) / 60000;
 
   let urgency;
@@ -248,7 +250,12 @@ function renderChip(arrival, now, extraClass = '') {
   }
 
   let timeStr;
-  if (state.relativeTime) {
+  if (primary) {
+    const abs = arrival.eta.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const m = Math.round(mins);
+    const rel = m < 0 ? `${-m}m ago` : `in ${m}m`;
+    timeStr = `${abs} (${rel})`;
+  } else if (state.relativeTime) {
     const m = Math.round(mins);
     timeStr = m < 0 ? `${-m}m ago` : `in ${m}m`;
   } else {
