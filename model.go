@@ -73,6 +73,7 @@ func initialModel() model {
 		stopNames:     make(map[string]string),
 		pendingRoutes: make(map[string]struct{}),
 		favorites:     loadFavorites(),
+		relativeTime:  loadPreferences().RelativeTime,
 		loading:       true,
 		spinner:       sp,
 		searchInput:   ti,
@@ -216,6 +217,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "a":
 			m.relativeTime = !m.relativeTime
+			savePreferences(PreferencesData{RelativeTime: m.relativeTime}) //nolint:errcheck
 		case "n":
 			stops := computeVisibleStops(m)
 			if len(stops) > 0 {
@@ -293,6 +295,47 @@ func saveFavorites(favorites map[string]string) error {
 		entries = append(entries, FavoriteEntry{StopID: id, Nickname: nick})
 	}
 	data, err := json.Marshal(FavoritesData{Favorites: entries})
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(path, data, 0644)
+}
+
+// ── Preferences persistence ────────────────────────────────────────────────────
+
+func preferencesPath() (string, error) {
+	dir, err := os.UserConfigDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, "shuttle", "preferences.json"), nil
+}
+
+func loadPreferences() PreferencesData {
+	path, err := preferencesPath()
+	if err != nil {
+		return PreferencesData{}
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return PreferencesData{}
+	}
+	var pd PreferencesData
+	if err := json.Unmarshal(data, &pd); err != nil {
+		return PreferencesData{}
+	}
+	return pd
+}
+
+func savePreferences(prefs PreferencesData) error {
+	path, err := preferencesPath()
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		return err
+	}
+	data, err := json.Marshal(prefs)
 	if err != nil {
 		return err
 	}
