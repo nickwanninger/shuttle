@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shuttle — Northwestern Bus Tracker</title>
+  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="search-bar">
+    <label for="search-input">/ </label>
+    <input id="search-input" type="text" placeholder="filter stops…" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
+  </div>
+
+  <main id="app">
+    <p class="loading-msg"><span class="spinner">⠋</span> Connecting…</p>
+  </main>
+
+  <footer id="status-bar">
+    <button class="bar-btn" id="btn-refresh">
+      <span class="key">r</span><span class="desc"> refresh</span>
+    </button>
+    <button class="bar-btn" id="btn-time-toggle">
+      <span class="key">a</span><span class="desc" id="time-toggle-label"> relative time</span>
+    </button>
+    <span id="countdown"></span>
+  </footer>
+
+  <div id="toast"></div>
+
+  <noscript>JavaScript is required to use Shuttle.</noscript>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
